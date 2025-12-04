@@ -42,13 +42,12 @@ impl TimetableApp {
         let _ = dotenvy::dotenv();
 
         // Read DATABASE_URL from environment
-        let db_url = env::var(DATABASE_URL_ENV)
-            .unwrap_or_else(|_| {
-                // Provide a helpful default placeholder (NOT for production).
-                // Example default: "host=localhost user=postgres password=postgres dbname=timetable"
-                // Replace with your actual connection string or set DATABASE_URL env var.
-                "host=localhost user=postgres password=postgres dbname=timetable".to_string()
-            });
+        dotenvy::dotenv().ok();
+
+        // Read DATABASE_URL strictly from the environment
+        let db_url = env::var("DATABASE_URL")
+            .expect("DATABASE_URL must be set in the .env file or environment");
+
 
         // Attempt to load entries from DB; fall back to default on error.
         let entries = match load_entries(&db_url) {
